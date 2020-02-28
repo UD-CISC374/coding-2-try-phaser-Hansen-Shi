@@ -6,6 +6,7 @@ export default class MainScene extends Phaser.Scene {
   ship1: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
+  mothership: Phaser.GameObjects.Image;
   player: Phaser.Physics.Arcade.Sprite;
 
   boosts: Phaser.Physics.Arcade.Group;
@@ -25,10 +26,12 @@ export default class MainScene extends Phaser.Scene {
     this.background.setOrigin(0,0);
     
     this.ship1 = this.add.sprite(256/2 - 50, 272/2, "smol");
-    this.ship2 = this.add.sprite(256/2, 272/2, "norm")
-    this.ship3 = this.add.sprite(256/2 + 50, 272/2, "chonk")
+    this.ship2 = this.add.sprite(256/2, 272/2, "norm");
+    this.ship3 = this.add.sprite(256/2 + 50, 272/2, "chonk");
+    this.mothership = this.add.image(256/2, -100, "mothership");
+    this.mothership.setScale(.6);
 
-    this.player = this.physics.add.sprite(256/2 - 8, 272-64, "player")
+    this.player = this.physics.add.sprite(256/2 - 8, 272-64, "player");
     this.player.play("player_anim");
     this.cursorKeys = this.input.keyboard.createCursorKeys();
     this.player.setCollideWorldBounds(true);
@@ -37,7 +40,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.projectiles = this.add.group();
     
-    this.boosts = this.physics.add.group()
+    this.boosts = this.physics.add.group();
 
     var maxBoosts = 3;
     for (var i = 0; i <= maxBoosts; i++){
@@ -69,6 +72,7 @@ export default class MainScene extends Phaser.Scene {
     this.ship1.setInteractive();
     this.ship2.setInteractive();
     this.ship3.setInteractive();
+    this.mothership.setInteractive();
     this.player.setInteractive();
 
     this.physics.add.overlap(this.player, this.boosts, this.pickUp);
@@ -79,7 +83,8 @@ export default class MainScene extends Phaser.Scene {
 
   pickUp(player, boost){
     boost.disableBody(true, true);
-  }
+    boost.destroy();
+    }
   playerDeath(player, enemy){
     player.x = 256/2 - 8;
     player.y = 272 - 30;
@@ -132,7 +137,7 @@ export default class MainScene extends Phaser.Scene {
       boost.y = random_y;
     }
   }
-  destroyEnemy(pointer, gameObject){
+  destroyEnemy(gameObject){
     gameObject.setTexture("boom");
     gameObject.play("boom_anim");
   }
@@ -159,5 +164,14 @@ export default class MainScene extends Phaser.Scene {
       beam.update;
     }
 
+    if (this.boosts.getChildren().length === 0){
+      this.destroyEnemy(this.ship1);
+      this.destroyEnemy(this.ship2);
+      this.destroyEnemy(this.ship3);
+    }
+     if (this.enemies.getChildren().length === 0){
+       this.mothership.setPosition(256/2, 50);
+     }
   }
-}
+
+  }

@@ -34,6 +34,7 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 16,
       frameHeight : 16
     });
+    this.load.image("mothership", "assets/spritesheets/mothership.png");
   }
 
   create() {
@@ -55,7 +56,6 @@ export default class PreloadScene extends Phaser.Scene {
       frameRate: 20,
       repeat: -1
     });
-    
     this.anims.create({
       key: "boom_anim",
       frames: this.anims.generateFrameNumbers("boom", {start: 0,end: 4}),

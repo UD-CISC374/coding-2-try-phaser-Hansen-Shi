@@ -164,11 +164,11 @@ export default class MainScene extends Phaser.Scene {
       beam.update;
     }
 
-    if (this.boosts.getChildren().length === 0){
+    /*if (this.boosts.getChildren().length === 0){
       this.destroyEnemy(this.ship1);
       this.destroyEnemy(this.ship2);
       this.destroyEnemy(this.ship3);
-    }
+    }*/
      if (this.enemies.getChildren().length === 0){
        this.mothership.setPosition(256/2, 50);
      }

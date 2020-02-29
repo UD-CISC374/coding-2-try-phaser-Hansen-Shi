@@ -52,15 +52,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/coding-2-try-phaser-Hansen-Shi/betaassets/spritesheets/ship3.png"
   },
   {
-    "revision": "9fa6bcf422831dc123d3",
-    "url": "/coding-2-try-phaser-Hansen-Shi/betagen.main.f4bb83770fa1409cea20.bundle.js"
+    "revision": "bdf0b127b7c3171e531d",
+    "url": "/coding-2-try-phaser-Hansen-Shi/betagen.main.e8fefe5828d4f1d3d4c9.bundle.js"
   },
   {
     "revision": "201b65bee9df6270f739",
     "url": "/coding-2-try-phaser-Hansen-Shi/betagen.vendors.a047ee0740c7d21714d9.bundle.js"
   },
   {
-    "revision": "cc6e239e989661fba7cad5d819becaea",
+    "revision": "d6f5c910febc92d342af25b7ebce0659",
     "url": "/coding-2-try-phaser-Hansen-Shi/betaindex.html"
   },
   {

@@ -6,7 +6,7 @@ export default class MainScene extends Phaser.Scene {
   ship1: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
-  mothership: Phaser.GameObjects.Image;
+  mothership: Phaser.GameObjects.Sprite;
   player: Phaser.Physics.Arcade.Sprite;
 
   boosts: Phaser.Physics.Arcade.Group;
@@ -16,6 +16,9 @@ export default class MainScene extends Phaser.Scene {
   bomb: Phaser.Input.Keyboard.Key;
   projectiles: Phaser.GameObjects.Group;
   enemies: Phaser.Physics.Arcade.Group;
+
+  bombCount: integer;
+  buddyCount: integer;
 
   constructor() {
     super({ key: 'MainScene' });
@@ -28,8 +31,8 @@ export default class MainScene extends Phaser.Scene {
     this.ship1 = this.add.sprite(256/2 - 50, 272/2, "smol");
     this.ship2 = this.add.sprite(256/2, 272/2, "norm");
     this.ship3 = this.add.sprite(256/2 + 50, 272/2, "chonk");
-    this.mothership = this.add.image(256/2, -100, "mothership");
-    this.mothership.setScale(.6);
+    this.mothership = this.add.sprite(256/2, -100, "mothership");
+    this.mothership.setScale(.5);
 
     this.player = this.physics.add.sprite(256/2 - 8, 272-64, "player");
     this.player.play("player_anim");
@@ -85,17 +88,24 @@ export default class MainScene extends Phaser.Scene {
     boost.disableBody(true, true);
     boost.destroy();
     }
-  playerDeath(player, enemy){
+  playerDeath(player, buddyCount){
     player.x = 256/2 - 8;
     player.y = 272 - 30;
+    player.disableBody(true, true);
   }
   hit(projectile, enemy){
     projectile.destroy();
     enemy.destroy();
   }
-  moveEnemy(ship: Phaser.GameObjects.Image, speed: integer){
+  moveEnemy(ship: Phaser.GameObjects.Sprite, speed: integer){
     ship.y += speed;
     if (ship.y > 272){
+      this.spawnEnemy(ship);
+    }
+  }
+  moveBoss(ship: Phaser.GameObjects.Sprite, speed:integer){
+    ship.y += speed;
+    if (ship.y > 350){
       this.spawnEnemy(ship);
     }
   }
@@ -120,7 +130,7 @@ export default class MainScene extends Phaser.Scene {
       this.player.setVelocityY(0);
     }
   }
-  spawnEnemy(ship: Phaser.GameObjects.Image){
+  spawnEnemy(ship: Phaser.GameObjects.Sprite){
     var random_x = Phaser.Math.Between(0, 256);
     ship.y = 0;
     ship.x = random_x;
@@ -155,8 +165,12 @@ export default class MainScene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.spacebar)){
       this.shoot();
     }
-    if (Phaser.Input.Keyboard.JustDown(this.bomb)){
-      console.log("drop em");
+    if (Phaser.Input.Keyboard.JustDown(this.bomb) && this.bombCount > 0){
+      for (var i = 0; i <= this.enemies.getChildren().length; i++){
+        let exploded = this.enemies.getChildren()[i];
+        exploded.destroy();
+      }
+      this.bombCount -= 1;
     }
 
     for (var i = 0; i < this.projectiles.getChildren().length; i++){
@@ -164,14 +178,20 @@ export default class MainScene extends Phaser.Scene {
       beam.update;
     }
 
-    /*if (this.boosts.getChildren().length === 0){
-      this.destroyEnemy(this.ship1);
-      this.destroyEnemy(this.ship2);
-      this.destroyEnemy(this.ship3);
-    }*/
-     if (this.enemies.getChildren().length === 0){
-       this.mothership.setPosition(256/2, 50);
-     }
+    if (this.enemies.getChildren().length === 0){
+      this.moveBoss(this.mothership, 1);
+    }
+
+    if (this.boosts.getChildren().length <= 2){
+      this.bombCount = 2;
+    }
+    if (this.boosts.getChildren().length === 0){
+      this.buddyCount = 2;
+    }
+    
+    if (!this.player.active){
+      this.add.text(256/2 - 40, 272/2, "Game Over");
+    }
   }
 
   }

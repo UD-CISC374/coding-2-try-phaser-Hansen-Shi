@@ -34,7 +34,10 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 16,
       frameHeight : 16
     });
-    this.load.image("mothership", "assets/spritesheets/mothership.png");
+    this.load.spritesheet("mothership", "assets/spritesheets/mothership.png", {
+      frameWidth: 306,
+      frameHeight: 270
+    });
   }
 
   create() {

@@ -1,4 +1,5 @@
 import Beam from "./beam";
+import Mothership from "./Mothership";
 
 export default class MainScene extends Phaser.Scene {
   background: Phaser.GameObjects.TileSprite;
@@ -6,7 +7,7 @@ export default class MainScene extends Phaser.Scene {
   ship1: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
-  mothership: Phaser.GameObjects.Sprite;
+  mothership: Mothership;
   player: Phaser.Physics.Arcade.Sprite;
 
   boosts: Phaser.Physics.Arcade.Group;
@@ -28,11 +29,11 @@ export default class MainScene extends Phaser.Scene {
     this.background = this.add.tileSprite(0,0, 256, 272, "background");
     this.background.setOrigin(0,0);
     
-    this.ship1 = this.add.sprite(256/2 - 50, 272/2, "smol");
-    this.ship2 = this.add.sprite(256/2, 272/2, "norm");
-    this.ship3 = this.add.sprite(256/2 + 50, 272/2, "chonk");
-    this.mothership = this.add.sprite(256/2, -100, "mothership");
-    this.mothership.setScale(.5);
+    this.ship1 = this.add.sprite(Phaser.Math.Between(0, 256), 0, "smol");
+    this.ship2 = this.add.sprite(Phaser.Math.Between(0, 256), 0, "norm");
+    this.ship3 = this.add.sprite(Phaser.Math.Between(0, 256), 0, "chonk");
+    this.mothership = new Mothership(this);
+    this.mothership.setScale(.4);
 
     this.player = this.physics.add.sprite(256/2 - 8, 272-64, "player");
     this.player.play("player_anim");
@@ -81,6 +82,8 @@ export default class MainScene extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.boosts, this.pickUp);
     this.physics.add.overlap(this.player, this.enemies, this.playerDeath);
     this.physics.add.overlap(this.projectiles, this.enemies, this.hit);
+    this.physics.add.overlap(this.player, this.mothership , this.playerDeath);
+    this.physics.add.overlap(this.projectiles, this.mothership, this.hitBoss);
 
   }
 
@@ -88,7 +91,7 @@ export default class MainScene extends Phaser.Scene {
     boost.disableBody(true, true);
     boost.destroy();
     }
-  playerDeath(player, buddyCount){
+  playerDeath(player){
     player.x = 256/2 - 8;
     player.y = 272 - 30;
     player.disableBody(true, true);
@@ -96,6 +99,10 @@ export default class MainScene extends Phaser.Scene {
   hit(projectile, enemy){
     projectile.destroy();
     enemy.destroy();
+  }
+  hitBoss(projectile, mothership){
+    projectile.destroy();
+    mothership.hit();
   }
   moveEnemy(ship: Phaser.GameObjects.Sprite, speed: integer){
     ship.y += speed;
@@ -166,10 +173,13 @@ export default class MainScene extends Phaser.Scene {
       this.shoot();
     }
     if (Phaser.Input.Keyboard.JustDown(this.bomb) && this.bombCount > 0){
-      for (var i = 0; i <= this.enemies.getChildren().length; i++){
-        let exploded = this.enemies.getChildren()[i];
-        exploded.destroy();
+      if (this.enemies.getChildren().length > 0){
+        for (var i = 0; i <= this.enemies.getChildren().length; i++){
+          let exploded = this.enemies.getChildren()[i];
+          exploded.destroy();
+        }
       }
+      this.mothership.health -= 25;
       this.bombCount -= 1;
     }
 
@@ -191,6 +201,11 @@ export default class MainScene extends Phaser.Scene {
     
     if (!this.player.active){
       this.add.text(256/2 - 40, 272/2, "Game Over");
+    }
+
+    if (this.player.active && this.mothership.health === 0){
+      this.mothership.destroy();
+      this.add.text(256/2 - 50, 272/2, "Winner, Yay!");
     }
   }
 

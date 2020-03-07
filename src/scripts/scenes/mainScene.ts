@@ -20,6 +20,10 @@ export default class MainScene extends Phaser.Scene {
 
   bombCount: integer;
   buddyCount: integer;
+  
+  pewPew: Phaser.Sound.BaseSound;
+  boomBoom: Phaser.Sound.BaseSound;
+  music: Phaser.Sound.BaseSound;
 
   constructor() {
     super({ key: 'MainScene' });
@@ -45,6 +49,20 @@ export default class MainScene extends Phaser.Scene {
     this.projectiles = this.add.group();
     
     this.boosts = this.physics.add.group();
+
+    this.pewPew = this.sound.add("pew");
+    this.boomBoom = this.sound.add("bam");
+    this.music = this.sound.add("battle");
+    var musicConfig = {
+      mute: false,
+      volume: .3,
+      rate: 1,
+      detune: 0,
+      seek: 0,
+      loop: true,
+      delay: 0
+    }
+    this.music.play(musicConfig);
 
     var maxBoosts = 3;
     for (var i = 0; i <= maxBoosts; i++){
@@ -101,8 +119,8 @@ export default class MainScene extends Phaser.Scene {
     enemy.destroy();
   }
   hitBoss(projectile, mothership){
-    projectile.destroy();
     mothership.hit();
+    projectile.destroy();
   }
   moveEnemy(ship: Phaser.GameObjects.Sprite, speed: integer){
     ship.y += speed;
@@ -160,6 +178,7 @@ export default class MainScene extends Phaser.Scene {
   }
   shoot(){
     var beam = new Beam(this);
+    this.pewPew.play();
   }
   update() {
     this.moveEnemy(this.ship1, 3);

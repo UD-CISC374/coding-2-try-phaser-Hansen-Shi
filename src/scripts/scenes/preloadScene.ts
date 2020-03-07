@@ -38,6 +38,10 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 306,
       frameHeight: 270
     });
+
+    this.load.audio("battle", "assets/sounds/battleMusic.mp3");
+    this.load.audio("pew", "assets/sounds/pew.mp3");
+    this.load.audio("bam", "assets/sounds/explosion.mp3");
   }
 
   create() {
